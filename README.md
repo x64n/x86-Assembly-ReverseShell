@@ -183,3 +183,5 @@ Ensure the listener (`listener.py`) is **running before executing the shell**.
 - [NASM Assembly Guide](https://www.nasm.us/)
 
 ---
+
+DM `ceptronn` on Discord for any questions!
