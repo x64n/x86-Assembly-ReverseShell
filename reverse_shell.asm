@@ -61,7 +61,7 @@ Start:
     test eax, eax         
     jz exit
 
-    ; Call WSAStartup
+
     push wsaData
     push 0x0202           
     call _WSAStartup@8
@@ -88,7 +88,7 @@ Start:
     test eax, eax     
     jnz exit
 
-    ; Create job object
+
     push 0                 
     push 0                
     call _CreateJobObjectA@8
