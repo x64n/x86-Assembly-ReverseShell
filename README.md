@@ -124,35 +124,45 @@ victim-PC\user
 | `exit`     | Close the current session |
 
 ---
----
+
 
 ## **Compilation & Execution**
-### **Method 1: Using `compile.bat` (Recommended)**
+### **📌 Method 1: Using `compile.bat` (Recommended)**
 A **Windows batch script** (`compile.bat`) is included for **automatic assembly and linking**.  
 
-Run:
-```cmd
-compile.bat
-```
-This will:
-- Assemble `reverse_shell.asm` using `nasm`
-- Link it using `link.exe` (Windows default linker)
+> **⚠️ Important:**  
+> The script **requires the Microsoft Developer Command Prompt** because it uses `link.exe`.  
+> If you don’t have it, you need to **install Visual Studio with the MSVC toolchain**.  
 
-### **Method 2: Manual Compilation**
+#### **🔷 Option 1: Manually Open Developer Command Prompt**
+1. Open **Start Menu** and search for:
+   - **Developer Command Prompt for VS** (preferred)
+   - Or **x64 Native Tools Command Prompt**
+2. **Navigate to the project folder**:
+   ```cmd
+   cd C:\path\to\x86-Assembly-ReverseShell
+   ```
+3. **Run the compiler script**:
+   ```cmd
+   compile.bat
+   ```
+---
+### **📌 Method 2: Manual Compilation**
 #### **Using `nasm` and `link.exe`**
 ```cmd
 nasm -f win32 reverse_shell.asm -o reverse_shell.obj
 link /entry:Start /subsystem:console reverse_shell.obj kernel32.lib ws2_32.lib
 ```
+> **🔴 If `link` is not found**, use the **Developer Command Prompt** as explained above.
 
 #### **Using `nasm` and `mingw-w64` (`ld`)**
 ```cmd
 nasm -f win32 reverse_shell.asm -o reverse_shell.o
 ld -o reverse_shell.exe reverse_shell.o -lkernel32 -lws2_32
 ```
+> **🟢 This method works without `link.exe`**, using `mingw-w64` instead.
 
 ---
-
 ### **Running the Reverse Shell**
 After compiling, execute:
 ```cmd
