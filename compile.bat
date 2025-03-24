@@ -1,4 +1,6 @@
 @echo off
+cd /d %~dp0
+
 echo Setting up MSVC environment...
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
 
